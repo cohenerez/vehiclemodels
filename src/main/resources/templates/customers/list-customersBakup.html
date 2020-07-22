@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html lang="en" 
+   xmlns:th="http://www.thymeleaf.org"
+   xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+	<title>Customer Directory</title>
+ <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+  
+     <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+	<script th:src="@{../../vendor/jquery/jquery-3.4.1.js}" type="text/javascript"></script>
+	<script type="text/javascript"  th:src="@{/js/deleteCustomerAjax.js}"> </script>
+     
+                                                     
+
+</head>
+
+<body>
+  <div class = "container">
+	<h3>Customer Directory </h3>
+    <hr>
+    
+    <div>
+		  User: <span sec:authentication="name"></span>
+		<br>
+		  Role(s): <span sec:authentication="principal.authorities"></span>
+		<br><br>
+	</div>
+    
+    <form th:action="@{/customers/search}" class="form-inline">
+		<a th:href="@{/customers/showFormForAddCustomer}"
+			class="btn btn-primary btn-sm mr-5 mb-3">
+			Add Customer
+		</a>
+
+		<input class="form-control  ml-5 mr-sm-2 mb-3" id="shrchcustomer" type="search" name="customerName" placeholder="Search by name" />
+
+		<button class="btn btn-success mb-3" type="submit">Search</button>
+    </form>	
+      
+      
+   <form  class="form-inline"  id="customersForm"   >
+ 
+    <table class= "table table-bordered table-striped" th:id="customersTable">
+		<thead class = "thead-dark">
+			<tr>
+				<th>Customer Name</th>
+				<th>Contact First Name</th>
+				<th>Contact Last Name</th>
+			    <th>Telephone</th>
+			    <th>Email</th>
+			     <th>Credit Limit</th>
+			    <th>Action</th>
+			</tr>
+		</thead>
+		
+		<tbody>
+		
+			<tr th:each="tempCustomr : ${customerPage.content}">
+			
+				<td th:hidden ="${tempCustomr.id}" th:id="customerId"  />
+				 <td>
+                 <a th:href="@{/customers/showFormForUpdatCustomer/(customerId=${tempCustomr.id})}"
+                  th:text="${tempCustomr.customerName}"  id ="customerName"> 
+                                   
+                 </a>
+                    </td>
+			
+				<td th:text="${tempCustomr.contactFirstName}"  th:id="contactFirstName"/>
+				<td th:text="${tempCustomr.contactLastName}" th:id ="contactLastName"/>
+				<td th:text="${tempCustomr.phone}"  th:id ="phone"/>
+				<td th:text="${tempCustomr.email}"   th:id ="email" />
+				<td th:text="${tempCustomr.creditLimit}" th:id ="creditLimit" />
+			  	<td >
+			  	  <input type="checkbox"  class="radioCheck"  th:id="customerId"   name= "customerId" th:value="${tempCustomr.id}"  onclick="check(this)"  >
+			  	  
+			      </td>
+			  	</tr>
+		</tbody>		
+	</table>
+       <div>
+	      <button type="submit"   class="btn btn-success mb-3" >Delete checked boxes </button>
+
+	   </div>
+
+
+</form>
+	  <p  th:id = "customerMessage">text </p>
+	<hr>
+	
+
+
+	
+	<nav aria-label="Pagination" th:if="${customerPage.totalPages gt 0}">
+    <ul class="pagination justify-content-center font-weight-medium">
+        <li class="page-item" th:classappend="${customerPage.number eq 0} ? 'disabled'">
+            <a class="page-link svg-icon"
+               th:href="@{/customers/list?page={id}(id=${customerPage.number lt 2 ? 1 : customerPage.number})}"
+               aria-label="Previous"
+               title="Previous Page" rel="tooltip">
+                <span aria-hidden="true" data-feather="chevrons-left" style="width:20px  height=:20px"></span>
+            </a>
+        </li>
+        <li class="page-item" th:classappend="${i eq customerPage.number + 1} ? 'active'"
+            th:each="i : ${#numbers.sequence( customerPage.number + 1, customerPage.totalPages > 6 + customerPage.number ? customerPage.number + 6 : customerPage.totalPages, 1)}">
+            <a class="page-link" th:href="@{/customers/list?page={id}(id=${i})}" th:text="${i}"
+               th:title="${'Page '+ i}"
+               rel="tooltip"></a>
+        </li>
+        <li class="page-item disabled" th:if="${customerPage.number + 6 < customerPage.totalPages}">
+            <a class="page-link svg-icon" href="#">
+                <span data-feather="more-horizontal" style="width:20px  height=:20px"></span>
+            </a>
+        </li>
+        <li class="page-item" th:classappend="${customerPage.number + 1 eq customerPage.totalPages} ? 'disabled'">
+            <a class="page-link svg-icon" th:href="@{/customers/list?page={id}(id=${customerPage.number + 2})}"
+               aria-label="Next"
+               title="Next Page" rel="tooltip">
+                <span aria-hidden="true" data-feather="chevrons-right" style="width:20px  height=:20px"></span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+
+
+
+
+  </div>
+
+
+ 
+  
+     
+
+
+
+
+    <script type="text/javascript"  th:src="@{/js/customJs.js}"> </script>
+    <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+</body>
+
+</html>
